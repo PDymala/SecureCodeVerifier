@@ -39,6 +39,9 @@ public class Result extends AppCompatActivity {
         textViewTokenValid = findViewById(R.id.textViewTokenValid);
         buttonExit = findViewById(R.id.button);
         webView = findViewById(R.id.webciew);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+
         checkCode(message);
 
 
@@ -57,8 +60,8 @@ public class Result extends AppCompatActivity {
                 try {
 
                     JSONObject j = new JSONObject(message);
-
-                    if (j.has("fc") && j.has("data") && j.has("token")){
+//                if has type...
+                    if (j.get("type").equals("fc") && j.has("data") && j.has("token")){
 
                         Encryption encryption = new Encryption();
                         String encr = encryption.get_SHA_512_SecurePassword(j.get("data").toString());
@@ -68,7 +71,10 @@ public class Result extends AppCompatActivity {
                                 public void run() {
                                     webView.loadData(
 
-                                            " <html><body> <p style=\"word-wrap: break-word;\">" + String.valueOf(j) + "</p></body></html>"
+                                            " <html><body style=\" word-break: break-all;  \"> "+
+
+                                                    String.valueOf(j)+
+                                                " </body></html>"
 
                                             , "text/html; charset=UTF-8", null);
                                 }
@@ -78,7 +84,7 @@ public class Result extends AppCompatActivity {
                         } else{
                             tokenInvalid();
                         }
-                    } else if (j.has("sd") && j.has("id") && j.has("key")){
+                    } else if (j.get("type").equals("sd")  && j.has("id") && j.has("key")){
                         URL url = new URL("https://securecode.diplabs.app/securedata/getdata?id="+j.get("id")); //Enter URL here
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("POST");
@@ -109,21 +115,22 @@ public class Result extends AppCompatActivity {
 //                       decryption
                         Encryption encryption = new Encryption();
 
-                        String encr = encryption.decrypt(sb.toString(),(String)j.get("key"));
+                        JSONObject z = new JSONObject(sb.toString());
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                webView.loadData(
+                        String encr = encryption.decrypt(z.get("data").toString(), j.get("key").toString());
+
+                        z.put("type","sd");
+                        z.put("decrypted data", encr);
+
+                        Log.i(TAG, "run: "+encr);
+                        runOnUiThread(() -> webView.loadData(
 
 
 
-                                        " <html><body> <p style=\"word-wrap: break-word;\">" + sb.toString() + " <BR> " +
-                                                 encr + "</p></body></html>"
+                                " <html><body> <p style=\"word-wrap: break-word;\">" +
+                                         z.toString() + "</p></body></html>"
 
-                                        , "text/html; charset=UTF-8", null);
-                            }
-                        });
+                                , "text/html; charset=UTF-8", null));
 
                         tokenValid();
 

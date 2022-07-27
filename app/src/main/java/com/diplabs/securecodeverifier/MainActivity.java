@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
         mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
-            Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(MainActivity.this, Result.class);
             intent.putExtra("data", result.getText());
             startActivity(intent);

@@ -1,27 +1,13 @@
 package com.diplabs.securecodeverifier;
 
-import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 import java.util.Arrays;
 import java.util.Base64;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -62,14 +48,13 @@ public class Encryption {
 
             Cipher cipher = Cipher.getInstance("AES/CFB/NoPadding");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-            ;
+
             plain_text = new String(cipher.doFinal(Arrays.copyOfRange(encrypted_decoded_bytes, 16, encrypted_decoded_bytes.length)));//Returns garbage characters
             return plain_text;
 
         }  catch (Exception e) {
-            System.err.println("Caught Exception: " + e.getMessage());
+            Log.i(TAG, e.getMessage());
         }
-        System.out.print(plain_text);
         return plain_text;
     }
 
