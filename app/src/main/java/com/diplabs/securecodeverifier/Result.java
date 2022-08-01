@@ -39,8 +39,6 @@ public class Result extends AppCompatActivity {
         textViewTokenValid = findViewById(R.id.textViewTokenValid);
         buttonExit = findViewById(R.id.button);
         webView = findViewById(R.id.webciew);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 
         checkCode(message);
 
@@ -60,25 +58,22 @@ public class Result extends AppCompatActivity {
                 try {
 
                     JSONObject j = new JSONObject(message);
+                    Log.i(TAG, "run: "+message);
 //                if has type...
-                    if (j.get("type").equals("fc") && j.has("data") && j.has("token")){
+                    if (j.get("type").equals("tc") && j.has("data") && j.has("token")){
 
                         Encryption encryption = new Encryption();
                         String encr = encryption.get_SHA_512_SecurePassword(j.get("data").toString());
+                        Log.i(TAG, "run: "+encr);
                         if (j.get("token").toString().equals(encr) ) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    webView.loadData(
+                            runOnUiThread(() -> webView.loadData(
 
-                                            " <html><body style=\" word-break: break-all;  \"> "+
+                                    " <html><body style=\" word-break: break-all;  \"> "+
 
-                                                    String.valueOf(j)+
-                                                " </body></html>"
+                                            String.valueOf(j)+
+                                        " </body></html>"
 
-                                            , "text/html; charset=UTF-8", null);
-                                }
-                            });
+                                    , "text/html; charset=UTF-8", null));
 
                             tokenValid();
                         } else{
@@ -88,6 +83,7 @@ public class Result extends AppCompatActivity {
                         URL url = new URL("https://securecode.diplabs.app/securedata/getdata?id="+j.get("id")); //Enter URL here
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("POST");
+                        // to jest POSt, a serwer ma get.... ale dziala
                         conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
                         conn.setRequestProperty("Accept","application/json");
                         conn.setDoOutput(true);
@@ -133,6 +129,17 @@ public class Result extends AppCompatActivity {
                                 , "text/html; charset=UTF-8", null));
 
                         tokenValid();
+
+
+
+
+
+                    } else if (j.get("type").equals("ic")  && j.has("data")){
+
+
+                        Intent intent = new Intent(Result.this, ResultImage.class);
+                        intent.putExtra("data", j.get("data").toString());
+                        startActivity(intent);
 
 
 

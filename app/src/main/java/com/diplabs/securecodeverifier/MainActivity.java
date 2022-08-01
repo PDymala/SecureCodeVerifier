@@ -16,6 +16,9 @@ import com.budiyev.android.codescanner.CodeScannerView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int Camera_request_code = 100;
+    private static final int Write_storage_request_code = 200;
+    private static final int Read_storage_request_code = 300;
 
     private static final String TAG = "lol";
     private CodeScanner mCodeScanner;
@@ -45,18 +48,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     private void permission() {
 
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
-                            Manifest.permission.CAMERA
-                    },
-                    100);
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                                Manifest.permission.CAMERA
+                        },
+                        Camera_request_code);
 
+            }
+
+
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        },
+                        Write_storage_request_code);
+
+            }
+
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                        },
+                        Read_storage_request_code);
+
+            }
         }
 
 
-    }
 
 
 
